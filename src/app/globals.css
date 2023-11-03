@@ -25,3 +25,6 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+.react-tel-input .form-control {
+  @apply !w-full p-1 !text-base;
+}
