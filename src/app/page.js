@@ -1,113 +1,124 @@
-import Image from 'next/image'
+'use client'
+import {AiFillHeart,AiFillEye} from 'react-icons/ai'
+import {FaRegCommentDots,FaShare} from 'react-icons/fa'
+import {  useRouter } from 'next/navigation'
+import {elementArray} from '@/utils/allelements'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useEffect,useState,useContext } from 'react'
+import { HashLoader } from 'react-spinners'
+import { GlobalContext } from '@/context'
+import { useUrl } from 'nextjs-current-url';
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+  const [loading,setLoading] = useState(true)
+  const [allApps,setAllApps] = useState([])
+  const router = useRouter();
+  const url = useUrl();
+
+  // console.log(pathName,url)
+
+  const {token,userId} = useContext(GlobalContext)
+// console.log(userId)
+  const AddView = async(id) =>{
+     await axios.put('/api/allapps/view',{
+      id,userId:userId || 'unKnown'
+    })
+  }
+  const AddLike = async(id) =>{
+    if(!token){
+      router.push('/login')
+    }
+     await axios.put('/api/allapps/like',{
+      id,token
+    })
+    fetchAllApps();
+  }
+  const AddComment = async(id) =>{    
+     router.push(`/api/comments/${id}`)
+  }
+  const AddShare = async(id,linkId) =>{
+     await axios.put('/api/allapps/share',{
+      id,userId:userId || 'unKnown'
+    })
+    fetchAllApps();
+    navigator.clipboard.writeText(url.href+linkId);
+    toast.success('link is copied now you can share anywhere!')
+  }
+
+  const fetchAllApps = async() =>{
+    try {
+      const {data} = await axios.get('/api/allapps')
+      if(data.success){
+        setLoading(false);
+        setAllApps(data.apps)
+      }else{
+        toast.error(data.message);
+        setAllApps(elementArray)
+      }
+
+    } catch (error) {
+      toast.error(error.message);
+      setAllApps(elementArray)
+    }
+  }
+
+  useEffect(()=>{
+    fetchAllApps();
+  },[]);
+  return (loading?<div className='h-[40vh] w-full flex flex-col items-center justify-center'> <HashLoader speedMultiplier={2} color='red' size={80} /> </div> :
+    <div>
+      <div className='bg-gradient-to-r text-4xl from-rose-800 to-rose-300 w-[90%] m-auto py-3 my-3 text-center'>
+          <h1>All Apps</h1>
         </div>
-      </div>
+      <div className='flex flex-wrap justify-around space-x-5 space-y-5'>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+   {
+    allApps.map((item) =>{
+      const iconObj = {__html:item.icon};
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      function isLikeFind(id){
+        return id.userId === userId
+      }
+// console.log(item.liked.find(isLikeFind))
+      return item.show &&  <GetANewApp isLiked={item.liked.find(isLikeFind)?.userId === userId}  AddShare={()=>AddShare(item._id,item.id)} AddComment={()=> AddComment(item._id)} AddLike={()=>AddLike(item._id)}  AddView={()=>AddView(item._id)} name={item.name} id={item.id} like={item.liked} view={item.views} comment={item.comments} share={item.shares} router={router}  key={item.id} icon={<div className='w-120 h-120 hover:scale-125 hover:text-rose-300 duration-500 cursor-pointer ' dangerouslySetInnerHTML={iconObj} />}  />
+    })
+   }
+        
+      </div>    
+    </div>
   )
 }
+
+
+const GetANewApp = ({router,id,icon,name,view,like,share,comment,AddView,AddShare,AddComment,AddLike,isLiked}) =>(
+  <div className='bg-gray-500 w-fit rounded-lg text-center'>
+          <div onClick={() => {AddView(); router.push(id);}}  className='p-5'>
+           {/* <RiLockPasswordFill className="hover:scale-125 hover:text-gray-300 duration-500 cursor-pointer" size={120}/> */}
+          {icon}
+          </div>
+
+          <div className='max-w-[80%] m-auto text-center text-rose-400'>
+            <p className='text-xl font-sans w-full '>{name}</p>
+          </div>
+          <div className='flex p-5 items-center justify-around space-x-2'>
+            <span  className='text-center justify-center'>
+              <AiFillEye className='hover:text-blue-800 text-xl cursor-pointer hover:scale-125 m-auto duration-150' />
+              <p className='text-sm'>{view.length || 0}</p>
+            </span>
+             <span onClick={AddLike} className='text-center justify-center'>
+              <AiFillHeart className={`${isLiked ? 'text-rose-500':null} hover:text-rose-700 focus:text-rose-500 text-xl cursor-pointer hover:scale-125 m-auto duration-150`} />
+              <p className='text-sm'>{like.length || 0}</p>
+            </span>
+             <span onClick={AddComment} className='text-center justify-center'>
+              <FaRegCommentDots className='hover:text-gray-300 text-xl cursor-pointer m-auto hover:scale-125 duration-150' />
+              <p className='text-sm'>{comment || 0}</p>
+            </span>
+             <span onClick={AddShare} className='text-center justify-center'>
+              <FaShare className='hover:text-violet-700 text-xl cursor-pointer hover:scale-125 m-auto duration-150' />
+              <p className='text-sm'>{share.length || 0}</p>
+            </span>
+
+          </div>
+        </div>
+)
