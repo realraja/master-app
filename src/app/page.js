@@ -66,11 +66,12 @@ export default function Home() {
   useEffect(()=>{
     fetchAllApps();
   },[]);
-  return (loading?<div className='h-[40vh] w-full flex flex-col items-center justify-center'> <HashLoader speedMultiplier={2} color='red' size={80} /> </div> :
+  return (
     <div>
       <div className='bg-gradient-to-r text-4xl from-rose-800 to-rose-300 w-[90%] m-auto py-3 my-3 text-center'>
           <h1>All Apps</h1>
         </div>
+        {loading?<div className='h-[40vh] w-full flex flex-col items-center justify-center'> <HashLoader speedMultiplier={2} color='red' size={80} /> </div> :
       <div className='flex flex-wrap justify-around space-x-5 space-y-5'>
 
    {
@@ -85,7 +86,7 @@ export default function Home() {
     })
    }
         
-      </div>    
+      </div>    }
     </div>
   )
 }
