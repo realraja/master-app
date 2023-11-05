@@ -53,7 +53,9 @@ const page = () => {
         password,user:userId
       })
       if(data.success){
-        toast.success(data.message);
+        toast.success(data.message);        
+        setPasswordFun()
+        handleBookmarkList();
       }else{
         toast.error(data.message);
       }
