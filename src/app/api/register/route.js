@@ -62,7 +62,7 @@ export const POST = async(req)=>{
 
      
 
-            const cookieCheck = await jwt.sign(password,'rajesh8875');
+            const cookieCheck = await jwt.sign(password,'Rajesh@9803<key');
             const hashPassword = await hash(password,10);
 
             const NewUser = await User.create({

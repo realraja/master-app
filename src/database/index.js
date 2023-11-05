@@ -7,7 +7,7 @@ const connectDB = async() =>{
         const {connection} = await mongoose.connect('mongodb+srv://realllraja0:PJfrderdIKFIBevQ@cluster0.qxoyqkr.mongodb.net/',{
 
         });
-        console.log("MongoDB Connected",connection.host)
+        console.log("MongoDB Connected local",connection.host)
     }catch(err){
         console.log('error=>',err)
     }

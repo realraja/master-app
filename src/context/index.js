@@ -15,7 +15,6 @@ export default function GlobalState({children}){
     const [token,setToken] = useState()
     const [userId,setUserId] = useState('');
 
-
     // console.log(token)
     const fetchAuthUserData = useCallback(async() =>{
         const tokken = Cookies.get('token');
@@ -28,7 +27,7 @@ export default function GlobalState({children}){
             })
             .then(function (response) {                
                 setIsAuthUser(response.data.success);
-                // console.log(response.data)
+                console.log(response.data)
                 setUserId(response.data.isExistUser._id);
                 if(response.data.isExistUser._id === '654516c5beeb6dce478e7dda') {
                     setIsAdmin(true);

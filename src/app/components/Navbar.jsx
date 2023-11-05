@@ -1,27 +1,23 @@
 'use client'
 import { GlobalContext } from '@/context'
 import Link from 'next/link'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Cookies from "js-cookie"
 import axios from "axios"
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import ConfirmButton from './ConfirmButton'
-import jwt from 'jsonwebtoken'
 import { PulseLoader } from 'react-spinners'
 
 const Navbar = () => {
 
   const [confirmState,setConfirmState] = useState(false);
-
+  const [showNavbar,setShowNavbar] = useState(false);
   const {isAuthUser,token,fetchAuthUserData,isAdmin,isAuthLoading} = useContext(GlobalContext);
   const router = useRouter();
 
-  // let tokenId = jwt.verify(userId,'Rajesh@9803<key');
+  const pathName = usePathname()
 
-  // if(tokenId === '6540af06f6982a804f24177a') {
-  //   setIsAdmin(true);
-  // }
 
   const LogOut = async() =>{
       Cookies.remove("token");
@@ -37,8 +33,14 @@ const Navbar = () => {
     
     
 }
-
-  return (<>
+useEffect(()=>{
+  if(pathName.split('/')[1] === 'password-genrater'){
+    setShowNavbar(false);
+  }else{
+    setShowNavbar(true);
+  }
+},[pathName]);
+  return (showNavbar && <>
     <nav className='flex justify-between px-5 py-3 text-2xl bg-gray-600'>
       <div onClick={()=> router.push('/')}><h1 className='text-rose-500'>Test.App</h1></div>
 

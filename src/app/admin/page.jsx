@@ -61,7 +61,7 @@ const page = () => {
         </div></div>:
     <div>
 
-        <div className='bg-gradient-to-r text-4xl from-rose-800 to-rose-300 w-[90%] m-auto py-3 my-3 text-center'>
+        <div className='bg-gradient-to-r from-rose-800 to-rose-400 rounded text-4xl w-[90%] m-auto py-3 my-3 text-center'>
           <h1>Your All Apps</h1>
         </div>
         
