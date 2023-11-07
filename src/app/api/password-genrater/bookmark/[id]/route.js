@@ -31,3 +31,25 @@ export const DELETE = async(req,{params}) =>{
         })
     }
 }
+
+export const GET = async(req,{params}) =>{
+    const {id} = params;
+    try {
+        connectDB();
+        const bookmarks = await Bookmark.find({user:id});
+        
+        return NextResponse.json({
+            status: 200,
+            success : true,
+            message: 'Bookmarks fetched successfully',
+            bookmarks
+        })
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({
+            status: 200,
+            success : false,
+            message: 'Bookmarks fetched Unsuccessfully =>' + error.message
+        })
+    }
+}

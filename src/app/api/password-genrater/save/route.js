@@ -10,7 +10,7 @@ import saved from "@/models/PasswordGenrater/save";
 
 export const POST = async(req) =>{
     const {user, password,name,id,checkPass} = await req.json();
-    if(!user || !password || !id || !checkPass){
+    if(!user || !password  || !checkPass){
         return NextResponse.json({
             success: false,
             message: "please fill id and password"
@@ -48,10 +48,11 @@ export const POST = async(req) =>{
             saved: newSave
         })
     } catch (error) {
-        console.log(error);
+        console.log('error ==>',error);
         return NextResponse.json({
             success:true,
             message: error.message
         })
     }
 }
+
